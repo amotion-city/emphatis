@@ -1,0 +1,3 @@
+%{
+  "string_naming": {:hex, :string_naming, "0.5.0", "052793cb31efdbd1e4f217787c15ce3765686cd11bc58c4d5254f6df2b73d352", [:mix], []},
+}
