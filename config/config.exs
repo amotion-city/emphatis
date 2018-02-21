@@ -4,8 +4,7 @@ use Mix.Config
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :string_naming, categories:
-  ~w|
+config :string_naming, categories: ~w|
       AdditionalBoldGreekSymbols
       AdditionalBoldItalicGreekSymbols
       AdditionalCircledNumber
@@ -140,4 +139,4 @@ config :string_naming, categories:
       WhiteOnBlackSquaredLatinLetters
     |
 
-if File.exists?("#{Mix.env}.exs"), do: import_config "#{Mix.env}.exs"
+if File.exists?("#{Mix.env()}.exs"), do: import_config("#{Mix.env()}.exs")

@@ -27,7 +27,6 @@ defmodule Emphatis.MixProject do
   defp deps do
     [
       {:string_naming, "~> 0.5"},
-
       {:credo, "~> 0.8", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev}
 
@@ -45,11 +44,14 @@ defmodule Emphatis.MixProject do
 
   defp package do
     [
-     name: @app,
-     files: ~w|bin lib mix.exs README.md|,
-     maintainers: ["Aleksei Matiushkin"],
-     licenses: ["MIT"],
-     links: %{"GitHub" => "https://github.com/amotion-city/#{@app}",
-              "Docs" => "https://hexdocs.pm/#{@app}"}]
+      name: @app,
+      files: ~w|bin lib mix.exs README.md|,
+      maintainers: ["Aleksei Matiushkin"],
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => "https://github.com/amotion-city/#{@app}",
+        "Docs" => "https://hexdocs.pm/#{@app}"
+      }
+    ]
   end
 end

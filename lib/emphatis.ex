@@ -36,7 +36,7 @@ defmodule Emphatis do
     def unquote(typeface)(input) when is_binary(input) do
       input
       |> to_charlist()
-      |> Enum.map(& safe_convert(&1, unquote(typeface)))
+      |> Enum.map(&safe_convert(&1, unquote(typeface)))
       |> Enum.join()
     end
   end)
@@ -76,6 +76,7 @@ defmodule Emphatis do
     Enum.reduce(@markdown, input, fn {k, fun}, acc ->
       re = Regex.escape(k)
       re = Regex.compile!("(?:#{re})([^#{re}]+?)(?:#{re})")
+
       Regex.replace(re, acc, fn _, value ->
         apply(Emphatis, fun, [value])
       end)
@@ -84,28 +85,34 @@ defmodule Emphatis do
 
   defp module_atom(glyph, typeface) when typeface in @typefaces do
     typeface = to_string(typeface)
+
     namespace =
       typeface
       |> Macro.camelize()
       |> Kernel.<>(namespace_form(glyph))
+
     trailing_modules =
       typeface
       |> String.split("_")
-      |> Enum.map(& String.capitalize/1)
+      |> Enum.map(&String.capitalize/1)
 
     Module.concat(
-      ["StringNaming", namespace, "Mathematical" | trailing_modules] ++ [trailing_form(glyph)])
+      ["StringNaming", namespace, "Mathematical" | trailing_modules] ++ [trailing_form(glyph)]
+    )
   end
 
-  defp namespace_form(glyph) when glyph in (?0..?9), do: "Digits"
+  defp namespace_form(glyph) when glyph in ?0..?9, do: "Digits"
+
   defp namespace_form(glyph)
-    when glyph in (?a..?z)
-    when glyph in (?A..?Z), do: "Symbols"
+       when glyph in ?a..?z
+       when glyph in ?A..?Z,
+       do: "Symbols"
+
   defp namespace_form(_), do: "Unknowns"
 
-  defp trailing_form(glyph) when glyph in (?0..?9), do: "Digit"
-  defp trailing_form(glyph) when glyph in (?a..?z), do: "Small"
-  defp trailing_form(glyph) when glyph in (?A..?Z), do: "Capital"
+  defp trailing_form(glyph) when glyph in ?0..?9, do: "Digit"
+  defp trailing_form(glyph) when glyph in ?a..?z, do: "Small"
+  defp trailing_form(glyph) when glyph in ?A..?Z, do: "Capital"
   defp trailing_form(_), do: "Unknown"
 
   defp to_name(48), do: :zero
@@ -118,23 +125,21 @@ defmodule Emphatis do
   defp to_name(55), do: :seven
   defp to_name(56), do: :eight
   defp to_name(57), do: :nine
-  defp to_name(glyph) when glyph in (?A..?Z), do: to_name(glyph + 32)
-  defp to_name(glyph) when glyph in (?a..?z),
-    do: [glyph] |> to_string() |> String.downcase() |> String.to_atom()
+  defp to_name(glyph) when glyph in ?A..?Z, do: to_name(glyph + 32)
 
+  defp to_name(glyph) when glyph in ?a..?z,
+    do: [glyph] |> to_string() |> String.downcase() |> String.to_atom()
 
   defp safe_convert(glyph, typeface) when is_integer(glyph) and typeface in @typefaces do
     with mod <- module_atom(glyph, typeface),
          {:module, mod} <- Code.ensure_loaded(mod),
          fun <- to_name(glyph),
          0 <- mod.__info__(:functions)[fun] do
-
       apply(mod, fun, [])
     else
       _ -> to_string([glyph])
     end
   end
-
 
   ##############################################################################
 
@@ -148,16 +153,24 @@ defmodule Emphatis do
   end
 
   def process([]) do
-    IO.puts @usage
+    IO.puts(@usage)
   end
 
   def process({options, text}) do
     font =
       cond do
-        options[:fraktur] -> "fraktur"
-        options[:monospace] -> "monospace"
-        options[:struck] -> "struck"
-        options[:script] -> "bold_script"
+        options[:fraktur] ->
+          "fraktur"
+
+        options[:monospace] ->
+          "monospace"
+
+        options[:struck] ->
+          "struck"
+
+        options[:script] ->
+          "bold_script"
+
         true ->
           ~w|sans_serif bold italic|a
           |> Enum.filter(&options[&1])
@@ -183,22 +196,34 @@ defmodule Emphatis do
   # sans_serif_bold_italic
   # sans_serif_italic
   defp parse_args(args) do
-    {options, text, _} = OptionParser.parse(args,
-      strict: [
-        sans_serif: :boolean,
-        bold: :boolean, italic: :boolean,
-        script: :boolean, monospace: :boolean, struck: :boolean, fraktur: :boolean],
-      aliases: [
-        s: :sans_serif,
-        b: :bold, i: :italic,
-        t: :script, m: :monospace, d: :struck, f: :fraktur]
-    )
+    {options, text, _} =
+      OptionParser.parse(
+        args,
+        strict: [
+          sans_serif: :boolean,
+          bold: :boolean,
+          italic: :boolean,
+          script: :boolean,
+          monospace: :boolean,
+          struck: :boolean,
+          fraktur: :boolean
+        ],
+        aliases: [
+          s: :sans_serif,
+          b: :bold,
+          i: :italic,
+          t: :script,
+          m: :monospace,
+          d: :struck,
+          f: :fraktur
+        ]
+      )
 
     text =
       text
       |> Enum.map(fn
-        <<"\"", text :: binary>> -> String.trim_trailing(text, "\"")
-        <<"'", text :: binary>> -> String.trim_trailing(text, "'")
+        <<"\"", text::binary>> -> String.trim_trailing(text, "\"")
+        <<"'", text::binary>> -> String.trim_trailing(text, "'")
         text -> text
       end)
       |> Enum.join(" ")
