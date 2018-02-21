@@ -134,4 +134,75 @@ defmodule Emphatis do
       _ -> to_string([glyph])
     end
   end
+
+
+  ##############################################################################
+
+  @usage "Usage: emphatis -f | -m | -d | -t | [ -b -i -s ] text"
+
+  def main(args) do
+    args
+    |> parse_args()
+    |> process()
+    |> IO.puts()
+  end
+
+  def process([]) do
+    IO.puts @usage
+  end
+
+  def process({options, text}) do
+    font =
+      cond do
+        options[:fraktur] -> "fraktur"
+        options[:monospace] -> "monospace"
+        options[:struck] -> "struck"
+        options[:script] -> "bold_script"
+        true ->
+          ~w|sans_serif bold italic|a
+          |> Enum.filter(&options[&1])
+          |> Enum.join("_")
+      end
+
+    if font == "" or text == "" do
+      @usage
+    else
+      apply(Emphatis, String.to_atom(font), [text])
+    end
+  end
+
+  # bold
+  # bold_italic
+  # bold_script
+  # double_struck
+  # fraktur
+  # italic
+  # monospace
+  # sans_serif
+  # sans_serif_bold
+  # sans_serif_bold_italic
+  # sans_serif_italic
+  defp parse_args(args) do
+    {options, text, _} = OptionParser.parse(args,
+      strict: [
+        sans_serif: :boolean,
+        bold: :boolean, italic: :boolean,
+        script: :boolean, monospace: :boolean, struck: :boolean, fraktur: :boolean],
+      aliases: [
+        s: :sans_serif,
+        b: :bold, i: :italic,
+        t: :script, m: :monospace, d: :struck, f: :fraktur]
+    )
+
+    text =
+      text
+      |> Enum.map(fn
+        <<"\"", text :: binary>> -> String.trim_trailing(text, "\"")
+        <<"'", text :: binary>> -> String.trim_trailing(text, "'")
+        text -> text
+      end)
+      |> Enum.join(" ")
+
+    {options, text}
+  end
 end

@@ -23,3 +23,5 @@ erl_crash.dump
 emphatis-*.tar
 
 /.elixir_ls/
+
+/bin/
