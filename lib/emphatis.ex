@@ -157,6 +157,14 @@ defmodule Emphatis do
   end
 
   def process({options, text}) do
+    if (options[:yo]) do
+      Emphatis.yo!(text)
+    else
+      font_process(options, text)
+    end
+  end
+
+  defp font_process(options, text) do
     font =
       cond do
         options[:fraktur] ->
@@ -200,6 +208,7 @@ defmodule Emphatis do
       OptionParser.parse(
         args,
         strict: [
+          yo: :boolean,
           sans_serif: :boolean,
           bold: :boolean,
           italic: :boolean,
@@ -209,6 +218,7 @@ defmodule Emphatis do
           fraktur: :boolean
         ],
         aliases: [
+          y: :yo,
           s: :sans_serif,
           b: :bold,
           i: :italic,
