@@ -34,13 +34,13 @@ Just call `Emphatis.bold("string")` and get the string in bold:
 
 ```elixir
 iex|1 ▶ variants = ~w|
-...|1 ▶   bold italic bold_italic bold_script
-...|1 ▶   monospace double_struck fraktur
-...|1 ▶   sans_serif sans_serif_bold
-...|1 ▶   sans_serif_italic sans_serif_bold_italic|a
+...|1 ▷   bold italic bold_italic bold_script
+...|1 ▷   monospace double_struck fraktur
+...|1 ▷   sans_serif sans_serif_bold
+...|1 ▷   sans_serif_italic sans_serif_bold_italic|a
 iex|2 ▶ Enum.each(variants,
-...|2 ▶   &IO.puts(apply(Emphatis, &1, ["Hello, 2018 year!"]))
-...|2 ▶ )
+...|2 ▷   &IO.puts(apply(Emphatis, &1, ["Hello, 2018 year!"]))
+...|2 ▷ )
 
 𝐇𝐞𝐥𝐥𝐨, 𝟐𝟎𝟏𝟖 𝐲𝐞𝐚𝐫!
 𝐻𝑒𝑙𝑙𝑜, 2018 𝑦𝑒𝑎𝑟!
@@ -76,6 +76,20 @@ iex|6 ▶ Emphatis.yo! "=Hello, world, it’s 2018=!"
 
 Yes, the function name is `yo!`. Don’t ask.
 
+Syntax is:
+
+```elixir
+@markdown %{
+  "/" => :bold_italic,
+  "_" => :italic,
+  "#" => :bold_script,
+  "*" => :bold,
+  "`" => :monospace,
+  "~" => :fraktur,
+  "=" => :double_struck
+}
+```
+
 ## Using standalone
 
 `Emphatis` provides an `escript` to run the transformation locally from the
@@ -84,7 +98,15 @@ command line. To make it working:
 - `git clone git@github.com:amotion-city/emphatis.git`
 - `cd emphatis`
 - `mix do deps.get, escript.build`
-- [optionally] `mix escript.install`
+- _[optionally]_ `mix escript.install`
 - `bin/emphatis` (`bin/emphatis -b -i "I am bold and italic"`)
+
+To process simplified markdown:
+
+```bash
+
+$ bin/emphatis -y "I am *bold* and _italic_"
+I am 𝐛𝐨𝐥𝐝 and 𝑖𝑡𝑎𝑙𝑖𝑐
+```
 
 ## [Documentation](https://hexdocs.pm/emphatis).
