@@ -6,7 +6,7 @@ defmodule Emphatis.MixProject do
   def project do
     [
       app: @app,
-      version: "0.2.0",
+      version: "0.2.1",
       elixir: "~> 1.4",
       start_permanent: Mix.env() == :prod,
       escript: [main_module: Emphatis, path: "bin/#{@app}"],

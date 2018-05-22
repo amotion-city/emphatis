@@ -173,8 +173,8 @@ defmodule Emphatis do
         options[:monospace] ->
           "monospace"
 
-        options[:struck] ->
-          "struck"
+        options[:double_struck] ->
+          "double_struck"
 
         options[:script] ->
           "bold_script"
@@ -214,7 +214,7 @@ defmodule Emphatis do
           italic: :boolean,
           script: :boolean,
           monospace: :boolean,
-          struck: :boolean,
+          double_struck: :boolean,
           fraktur: :boolean
         ],
         aliases: [
@@ -224,7 +224,7 @@ defmodule Emphatis do
           i: :italic,
           t: :script,
           m: :monospace,
-          d: :struck,
+          d: :double_struck,
           f: :fraktur
         ]
       )
